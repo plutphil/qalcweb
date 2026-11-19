@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Qalculate WASM</title>
+</head>
+<body>
+    <input id="input" placeholder="Enter calculation" autofocus>
+    <button id="run">Calculate</button>
+    <pre id="output"></pre>
+
+    <script type="module">
+        import createQalculate from "./qalculate.js";
+
+        const qalculate = await createQalculate();
+
+        document.querySelector("#run").onclick = () => {
+            const input = document.querySelector("#input").value;
+            document.querySelector("#output").textContent =
+                qalculate.calculate(input);
+        };
+
+        document.querySelector("#input").onkeydown = e => {
+            if (e.key === "Enter")
+                document.querySelector("#run").click();
+        };
+    </script>
+</body>
+</html>

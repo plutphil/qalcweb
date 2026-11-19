@@ -1,0 +1,6 @@
+.git
+libs/*/autom4te.cache
+libs/*/.libs
+libs/*/Makefile
+libs/*/config.log
+libs/*/config.status

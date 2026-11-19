@@ -1,0 +1,5 @@
+.vscode/
+alt/
+src/
+wasm-deps/
+libs/
