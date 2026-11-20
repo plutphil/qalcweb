@@ -13,9 +13,11 @@ RUN apt-get update && apt-get install -y \
     m4 \
     gettext \
     texinfo \
+    autopoint \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /project
 
 
-CMD ["bash","build.sh"]
+# CMD ["bash","build.sh"]
+CMD ["bash"]

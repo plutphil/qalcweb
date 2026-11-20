@@ -1,5 +1,14 @@
 .vscode/
+node_modules/
 alt/
 src/
 wasm-deps/
 libs/
+
+# Emscripten build artifacts
+/web/qalc.js
+/web/qalc.wasm
+/web/qalc.data
+
+*.log
+package-lock.json

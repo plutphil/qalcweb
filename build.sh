@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -12,6 +11,8 @@ JOBS=$(nproc)
 mkdir -p "$LIBS" "$DEPS" "$SRC" "$WEB"
 
 export CPPFLAGS="-I$DEPS/include -I$DEPS/include/libxml2"
+export CFLAGS="-O2 -pthread"
+export CXXFLAGS="-O2 -pthread"
 export LDFLAGS="-L$DEPS/lib"
 export PKG_CONFIG_PATH="$DEPS/lib/pkgconfig"
 export PKG_CONFIG_LIBDIR="$DEPS/lib/pkgconfig"
@@ -111,12 +112,14 @@ build_libqalculate() {
     emconfigure ./configure \
         --host=wasm32-unknown-emscripten \
         --prefix="$DEPS" \
-        --disable-textport \
+        --disable-shared \
+        --enable-static \
         --disable-unittests \
+        --disable-nls \
         --without-libcurl \
         --without-icu \
         --without-gnuplot-call \
-        --disable-nls
+        --with-readline=no
 
     emmake make -j"$JOBS"
     emmake make install
@@ -127,18 +130,28 @@ build_application() {
 
     cp "$LIBS/libqalculate"/data/*.xml "$WEB/share/qalculate/"
 
-    em++ "$SRC/main.cpp" \
+    em++ "$LIBS/libqalculate/src/qalc.cc" \
+        -DHAVE_CONFIG_H \
+        -DPACKAGE_DATA_DIR='"/share"' \
+        -I"$LIBS/libqalculate" \
+        -I"$LIBS/libqalculate/libqalculate" \
         -I"$DEPS/include" \
         -I"$DEPS/include/libxml2" \
         -L"$DEPS/lib" \
         -lqalculate -lxml2 -lmpfr -lgmp -lm \
-        --bind -O2 \
+        -O2 \
+        -pthread \
         -s MODULARIZE=1 \
         -s EXPORT_ES6=1 \
         -s ALLOW_MEMORY_GROWTH=1 \
-        -s ENVIRONMENT=web \
+        -s ENVIRONMENT=worker \
+        -s FORCE_FILESYSTEM=1 \
+        -s EXIT_RUNTIME=0 \
+        -s PTHREAD_POOL_SIZE=4 \
+        -s PROXY_TO_PTHREAD=1 \
+        -s EXPORTED_RUNTIME_METHODS='["callMain","FS"]' \
         --preload-file "$WEB/share/qalculate@/share/qalculate" \
-        -o "$WEB/qalculate.js"
+        -o "$WEB/qalc.js"
 }
 
 build_gmp
