@@ -5,10 +5,8 @@ src/
 wasm-deps/
 libs/
 
-# Emscripten build artifacts
-/web/qalc.js
-/web/qalc.wasm
-/web/qalc.data
-
 *.log
 package-lock.json
+
+# GitHub Pages builds (the whole web directory is deployed directly)
+# Generated Qalculate WebAssembly files are intentionally committed.

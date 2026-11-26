@@ -15,6 +15,21 @@
         body { overflow: hidden; background: #11151c; }
         #terminal { width: 100vw; height: 100vh; padding: 12px; }
     </style>
+    <script>
+        if ("serviceWorker" in navigator && !window.crossOriginIsolated) {
+            navigator.serviceWorker.register("./coi-serviceworker.js", { scope: "./" }).then(() => {
+                navigator.serviceWorker.ready.then(() => {
+                    if (!sessionStorage.getItem("qalc-coi-reloaded")) {
+                        sessionStorage.setItem("qalc-coi-reloaded", "1");
+                        location.reload();
+                    }
+                });
+            });
+        }
+        if (window.crossOriginIsolated) {
+            sessionStorage.removeItem("qalc-coi-reloaded");
+        }
+    </script>
 </head>
 <body>
     <main id="terminal" aria-label="Qalculate terminal"></main>

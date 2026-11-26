@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-ROOT=/project
+ROOT=${ROOT:-/project}
 LIBS="$ROOT/libs"
 DEPS="$ROOT/wasm-deps"
 SRC="$ROOT/src"
