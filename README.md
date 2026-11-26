@@ -1,5 +1,7 @@
 # Qalc Web
 
+<https://plutphil.github.io/qalcweb/web/>
+
 Run libqalculate in a WebAssembly worker in your browser.
 
 ```sh
