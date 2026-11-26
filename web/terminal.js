@@ -22,8 +22,9 @@ terminal.open(container);
 fit.fit();
 terminal.writeln("Starting Qalculate WebAssembly…");
 
-if (typeof SharedArrayBuffer === "undefined" || typeof Atomics === "undefined") {
-  terminal.writeln("\r\nSharedArrayBuffer is unavailable. Serve this site with cross-origin isolation enabled.");
+if (!window.crossOriginIsolated || typeof SharedArrayBuffer === "undefined") {
+  terminal.writeln("\r\nSharedArrayBuffer is unavailable: this page is not cross-origin isolated.");
+  terminal.writeln("Open the app through `npm run serve` at http://localhost:8080, not VS Code Live Preview.");
   terminal.options.disableStdin = true;
 } else {
   const worker = new Worker(new URL("./worker.js", import.meta.url), { type: "module" });

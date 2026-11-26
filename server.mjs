@@ -11,17 +11,25 @@ const types = {
   ".mjs": "text/javascript; charset=utf-8",
   ".map": "application/json",
   ".data": "application/octet-stream",
-  ".wasm": "application/wasm"
+  ".wasm": "application/wasm",
+  ".svg": "image/svg+xml"
 };
 
 createServer((request, response) => {
   const pathname = decodeURIComponent(new URL(request.url, "http://localhost").pathname);
-  const relative = pathname === "/" ? "web/index.html" : pathname.replace(/^\/+/, "");
-  const file = normalize(join(root, relative));
 
   response.setHeader("Cross-Origin-Opener-Policy", "same-origin");
   response.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
   response.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+
+  if (pathname === "/") {
+    response.writeHead(302, { Location: "/web/index.html" });
+    response.end();
+    return;
+  }
+
+  const relative = pathname.replace(/^\/+/, "");
+  const file = normalize(join(root, relative));
 
   if (!file.startsWith(root)) {
     response.writeHead(403).end("Forbidden");
