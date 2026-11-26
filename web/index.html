@@ -13,7 +13,9 @@
         * { box-sizing: border-box; }
         html, body { width: 100%; height: 100%; margin: 0; }
         body { overflow: hidden; background: #11151c; }
-        #terminal { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100dvh; padding: 12px; }
+        #terminal { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100dvh; }
+        #terminal .xterm { padding: 12px; }
+        #terminal .xterm-viewport { overflow: hidden; }
     </style>
     <script>
         const coiReloadKey = "qalc-coi-reloaded";
