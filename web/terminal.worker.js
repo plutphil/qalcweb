@@ -40,7 +40,13 @@ self.onmessage = async ({ data }) => {
     const runtime = await createQalc({
       noInitialRun: true,
       locateFile: path => new URL(path, self.location.href).href,
-      preRun: [Module => Module.FS.init(input, write, write)]
+      preRun: [Module => {
+        Module.FS.mkdirTree("/project/wasm-deps/share");
+        if (!Module.FS.analyzePath("/project/wasm-deps/share/qalculate").exists) {
+          Module.FS.symlink("/share/qalculate", "/project/wasm-deps/share/qalculate");
+        }
+        Module.FS.init(input, write, write);
+      }]
     });
     self.postMessage({ type: "startup", text: "Starting interactive session…\r\n" });
     self.postMessage({ type: "ready" });

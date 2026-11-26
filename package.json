@@ -3,7 +3,7 @@
   "scripts": {
     "serve": "npm run build:web && node server.mjs",
     "build": "docker run --rm -v $PWD:/project -w /project qalcwasm bash build.sh",
-    "build:web": "esbuild web/terminal.js --bundle --format=esm --outfile=web/app.js --loader:.css=css && esbuild web/terminal.worker.js --bundle --format=esm --outfile=web/worker.js"
+    "build:web": "esbuild web/terminal.js --bundle --format=esm --outfile=web/app.js --loader:.css=css && esbuild web/terminal.worker.js --bundle --format=esm --outfile=web/worker.js --external:./qalc.js"
   },
   "dependencies": {
     "@xterm/addon-fit": "^0.11.0",

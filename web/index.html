@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
     <title>Qalculate Web Terminal</title>
     <link rel="icon" href="./favicon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="./app.css">
@@ -13,21 +13,38 @@
         * { box-sizing: border-box; }
         html, body { width: 100%; height: 100%; margin: 0; }
         body { overflow: hidden; background: #11151c; }
-        #terminal { width: 100vw; height: 100vh; padding: 12px; }
+        #terminal { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; height: 100dvh; padding: 12px; }
     </style>
     <script>
-        if ("serviceWorker" in navigator && !window.crossOriginIsolated) {
-            navigator.serviceWorker.register("./coi-serviceworker.js", { scope: "./" }).then(() => {
-                navigator.serviceWorker.ready.then(() => {
-                    if (!sessionStorage.getItem("qalc-coi-reloaded")) {
-                        sessionStorage.setItem("qalc-coi-reloaded", "1");
+        const coiReloadKey = "qalc-coi-reloaded";
+
+        if (window.crossOriginIsolated) {
+            sessionStorage.removeItem(coiReloadKey);
+        } else {
+            const isLivePreview = location.port === "3000";
+
+            if (isLivePreview) {
+                if ("serviceWorker" in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(registrations => {
+                        for (const registration of registrations) registration.unregister();
+                    });
+                }
+            } else if (location.hostname.endsWith("github.io") && "serviceWorker" in navigator) {
+                navigator.serviceWorker.register("./coi-serviceworker.js", { scope: "./" }).then(() => {
+                    const reloadOnce = () => {
+                        if (!navigator.serviceWorker.controller) return;
+                        if (sessionStorage.getItem(coiReloadKey)) return;
+                        sessionStorage.setItem(coiReloadKey, "1");
                         location.reload();
+                    };
+
+                    if (navigator.serviceWorker.controller) {
+                        reloadOnce();
+                    } else {
+                        navigator.serviceWorker.addEventListener("controllerchange", reloadOnce, { once: true });
                     }
                 });
-            });
-        }
-        if (window.crossOriginIsolated) {
-            sessionStorage.removeItem("qalc-coi-reloaded");
+            }
         }
     </script>
 </head>

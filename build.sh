@@ -56,7 +56,7 @@ build_mpfr() {
     clone https://github.com/alisw/MPFR.git "$LIBS/mpfr-src"
     cd "$LIBS/mpfr-src"
 
-    [ -f configure ] || autoreconf -fiv
+    autoreconf -fiv
 
     emconfigure ./configure \
         --prefix="$DEPS" \
@@ -121,6 +121,33 @@ build_libqalculate() {
         --without-gnuplot-call \
         --with-readline=no
 
+    cd "$LIBS/libqalculate"
+
+    python3 - <<'PY'
+from pathlib import Path
+import re
+
+path = Path("src/qalc.cc")
+text = path.read_text()
+
+fallback = '''#ifndef HAVE_LIBREADLINE
+static char rl_line_buffer[1] = "";
+static int rl_point = 0;
+static int rl_end = 0;
+#endif
+'''
+text = re.sub(r'#ifndef HAVE_LIBREADLINE\nstatic char rl_line_buffer\[1\] = "";\nstatic int rl_point = 0;\nstatic int rl_end = 0;\n#endif\n', '', text)
+text = re.sub(r'MathStructure mparsedf;\n', '', text)
+
+needle = '#include <libqalculate/MathStructure-support.h>\n'
+text = text.replace(needle, needle + '\n' + fallback + '\n', 1)
+
+mstruct_needle = 'MathStructure *mstruct, *parsed_mstruct, mstruct_exact, prepend_mstruct;\n'
+text = text.replace(mstruct_needle, mstruct_needle + 'MathStructure mparsedf;\n', 1)
+
+path.write_text(text)
+PY
+
     emmake make -j"$JOBS"
     emmake make install
 }
@@ -153,9 +180,14 @@ build_application() {
         --preload-file "$WEB/share/qalculate@/share/qalculate" \
         -o "$WEB/qalc.js"
 
+    python3 - <<'PY'
+from pathlib import Path
+path = Path("$WEB/qalc.js")
+PY
+
     cd "$ROOT"
-    npx --no-install esbuild web/terminal.js --bundle --format=esm --outfile=web/app.js --loader:.css=css
-    npx --no-install esbuild web/terminal.worker.js --bundle --format=esm --outfile=web/worker.js
+    npm install --silent
+    npm run build:web
 }
 
 build_gmp

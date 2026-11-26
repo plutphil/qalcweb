@@ -10,6 +10,10 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
+  if (!self.location.hostname.endsWith("github.io") && self.location.hostname !== "localhost") {
+    return;
+  }
+
   event.respondWith((async () => {
     const response = await fetch(event.request);
     const headers = new Headers(response.headers);
