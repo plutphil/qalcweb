@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Qalculate Web Terminal</title>
-    <link rel="stylesheet" href="/node_modules/@xterm/xterm/css/xterm.css">
+    <link rel="stylesheet" href="./web/app.css">
     <style>
         :root { color-scheme: dark; }
         * { box-sizing: border-box; }
@@ -12,17 +12,9 @@
         body { overflow: hidden; background: #11151c; }
         #terminal { width: 100vw; height: 100vh; padding: 12px; }
     </style>
-    <script type="importmap">
-        {
-            "imports": {
-                "@xterm/xterm": "/node_modules/@xterm/xterm/lib/xterm.mjs",
-                "@xterm/addon-fit": "/node_modules/@xterm/addon-fit/lib/addon-fit.mjs"
-            }
-        }
-    </script>
 </head>
 <body>
     <main id="terminal" aria-label="Qalculate terminal"></main>
-    <script type="module" src="/web/terminal.js"></script>
+    <script type="module" src="./web/app.js"></script>
 </body>
 </html>

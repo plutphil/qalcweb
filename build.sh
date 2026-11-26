@@ -152,6 +152,10 @@ build_application() {
         -s EXPORTED_RUNTIME_METHODS='["callMain","FS"]' \
         --preload-file "$WEB/share/qalculate@/share/qalculate" \
         -o "$WEB/qalc.js"
+
+    cd "$ROOT"
+    npx --no-install esbuild web/terminal.js --bundle --format=esm --outfile=web/app.js --loader:.css=css
+    npx --no-install esbuild web/terminal.worker.js --bundle --format=esm --outfile=web/worker.js
 }
 
 build_gmp

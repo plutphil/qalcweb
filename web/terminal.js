@@ -1,3 +1,4 @@
+import "@xterm/xterm/css/xterm.css";
 import { Terminal } from "@xterm/xterm";
 import { FitAddon } from "@xterm/addon-fit";
 
@@ -25,7 +26,7 @@ if (typeof SharedArrayBuffer === "undefined" || typeof Atomics === "undefined") 
   terminal.writeln("\r\nSharedArrayBuffer is unavailable. Serve this site with cross-origin isolation enabled.");
   terminal.options.disableStdin = true;
 } else {
-  const worker = new Worker(new URL("./terminal.worker.js", import.meta.url), { type: "module" });
+  const worker = new Worker(new URL("./worker.js", import.meta.url), { type: "module" });
   const capacity = 65536;
   const sab = new SharedArrayBuffer(16 + capacity);
   const control = new Int32Array(sab, 0, 4);
